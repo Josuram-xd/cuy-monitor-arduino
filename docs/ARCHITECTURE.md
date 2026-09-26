@@ -153,7 +153,7 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 | Decision | Why |
 |---|---|
 | USB serial + laptop bridge | Uno has no WiFi; laptop is already on site |
-| Same ingestion endpoint as the ai-service | One contract for every producer (ADR-007) |
+| Same ingestion endpoint as the ai-service | One contract for every producer (backend ADR-003) |
 | Cage-level weight | No reliable way to know which guinea pig is on the plate yet |
 | Send only stable readings, max 1 / 10 s | Less noise and bandwidth; the backend doesn't need raw samples |
 | Future: ESP32 | Would send over WiFi directly and remove the bridge |
