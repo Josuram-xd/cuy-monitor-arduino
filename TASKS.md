@@ -20,7 +20,7 @@
 
 - [ ] **Task 1.1** — `chore: add repo structure, README and gitignore`
   Carpetas `firmware/`, `calibration/`, `serial_bridge/`, `docs/`.
-- [ ] **Task 1.2** — `docs: add PRD, ARCHITECTURE and AGENTS`
+- [x] **Task 1.2** — `docs: add PRD, ARCHITECTURE and AGENTS`
 
 ### Task 2 — Hardware
 
