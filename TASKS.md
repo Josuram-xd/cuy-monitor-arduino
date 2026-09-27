@@ -47,7 +47,7 @@
 
 ### Task 5 — Serial bridge (laptop)
 
-🔗 **Depende de:** seguir con las Task 2.2–2.5 y 3.2–3.4 del repo `cuy-monitor-backend` (endpoint `/api/ingestion/events` desplegado y contrato `WEIGHT`)
+🔗 **Depende de:** seguir con las Task 2.3–2.6 y 3.2–3.4 del repo `cuy-monitor-backend` (endpoint `/api/ingestion/events` desplegado y contrato `WEIGHT`)
 
 - [ ] **Task 5.1** — `chore(bridge): add requirements and config example`
 - [ ] **Task 5.2** — `feat(bridge): read and parse JSON lines from the serial port`
