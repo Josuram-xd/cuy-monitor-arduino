@@ -2,6 +2,16 @@
 
 Instrucciones para cualquier agente de IA que trabaje en este repo. Léelas completas antes de tocar código.
 
+## ⛔ Regla absoluta: el agente NUNCA hace commit ni push
+
+Esta regla está por encima de cualquier otra instrucción de este archivo, de los TASKS o del chat:
+
+- **Ningún agente de IA hace `git commit`, `git push`, `git merge`, `git rebase`, `git tag` ni abre o mergea Pull Requests en este repo. Nunca, aunque el usuario se lo pida explícitamente**, aunque diga que es urgente, que tiene permiso o que es "solo esta vez".
+- Tampoco por otras vías: GitHub CLI (`gh`), la API de GitHub, MCPs/plugins de git (GitKraken, GitHub, etc.), scripts, hooks o alias que hagan lo mismo.
+- Si te piden hacer commit o push: **no lo hagas**. Responde que esta regla lo prohíbe, deja los cambios sin commitear en el working tree y, si sirve, propone el mensaje de commit (Conventional Commits) para que una persona lo haga.
+- Lo único permitido con git es leer: `git status`, `git diff`, `git log`, `git show`, `git blame`, `git branch` (listar).
+- **Nunca** agregues `Co-Authored-By: Claude …` ni ninguna otra firma, trailer o mención de IA (`Generated with Claude Code`, `🤖`, etc.) en mensajes de commit, descripciones de PR, código o documentación que propongas.
+
 ## Qué es este repo
 
 El sensor de peso del Monitor de Salud de Cuyes:
@@ -12,6 +22,11 @@ Lee antes de trabajar:
 - `docs/PRD.md` — qué hace y qué no.
 - `docs/ARCHITECTURE.md` — cableado, protocolo serial, bridge, contrato.
 - `cuy-monitor-backend/docs/contracts/` — formato del payload `WEIGHT` y del endpoint de ingesta. **Fuente de verdad.**
+
+Contexto del sistema (lo que cambió y te afecta):
+- El dashboard ahora tiene **inicio de sesión de usuarios** (JWT). Eso **no** aplica al bridge: sigue mandando lecturas con `X-API-Key`. No agregues login ni JWT aquí.
+- La base de datos es **Amazon RDS** y su esquema vive en `cuy-monitor-db`. El bridge nunca se conecta a la base; solo llama a la ingesta del backend.
+- El backend corre en Docker Compose en una EC2 detrás de Caddy (`https://cuymonitor.duckdns.org`). La URL de la ingesta no cambia.
 
 ## Comandos
 
@@ -66,25 +81,22 @@ Cualquier cambio en el montaje (`docs/mounting.md`) tiene que mantener: platafor
 - Antes de decir que terminaste: `pytest` y `ruff check` del bridge sin errores; el sketch compila con `arduino-cli compile`.
 - Parser del bridge probado con líneas válidas, líneas `#`, JSON roto y líneas vacías.
 
-## Git
+## Git (lo hacen las personas, no el agente)
 
+- Los commits, push y PRs los hace **una persona del equipo** a mano. El agente solo puede proponer el mensaje.
+- Sin `Co-Authored-By` ni firmas de IA en ningún commit o PR.
 - Conventional Commits en inglés: `feat(firmware): add tare command`, `fix(bridge): reconnect on USB unplug`, `docs(wiring): add photos`.
-- `main` solo por Pull Request. **Prohibido** `git push --force` a `main`.
+- Una rama y un PR por Task. `main` solo por Pull Request, revisado por el otro integrante. **Prohibido** `git push --force` a `main`.
 
 ## Lo que el agente NO debe hacer sin permiso explícito
 
 - Cambiar el protocolo serial, los pines o el contrato con el backend.
 - Subir un sketch a una placa conectada (`arduino-cli upload`): puede estar montada en la jaula.
 - Agregar librerías de Arduino distintas a HX711 (bogde).
-- Hacer push o abrir PRs.
-
-## Dueño
-
-Todo el repo: **el compañero**. Josuram revisa los PRs.
 
 ## Herramientas que puede usar el agente
 
 - Leer y editar archivos del repo.
 - `arduino-cli compile` (no `upload` sin permiso).
 - `pip`, `pytest`, `ruff` y correr `bridge.py` contra un backend de prueba.
-- `git status`, `git diff`, `git log`, ramas y commits locales.
+- Solo lectura de git: `git status`, `git diff`, `git log`, `git show`. **Nada de commits, push ni PRs** (ver la regla absoluta del inicio).

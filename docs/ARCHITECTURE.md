@@ -1,20 +1,23 @@
 # Architecture — cuy-monitor-arduino
 
 > Arduino Uno (ATmega328P) · Arduino IDE 2.x · HX711 library (bogde) · Python 3.14 + pyserial + httpx on the farm laptop
-> Last reviewed: 2026-09-26
+> Last reviewed: 2026-10-03
 
 ## 1. Context
 
 ```
 ┌──────────────── cage ─────────────────┐     ┌──────── farm laptop ────────┐        ┌──── AWS ────┐
 │ platform                              │     │                             │ HTTPS  │             │
-│  └─ 5 kg load cell ─► HX711 ─► Arduino│ USB │ serial_bridge (Python)      │ ─────► │ Caddy       │
+│  └─ 5 kg load cell ─► HX711 ─► Arduino│ USB │ serial_bridge (Python)      │ ─────► │ Caddy (EC2) │
 │                     (DT=3, SCK=2)     │ ──► │  reads JSON lines           │ X-API- │  └► backend │
-└───────────────────────────────────────┘     │ POST /api/ingestion/events  │  Key   │  └► Postgres│
+└───────────────────────────────────────┘     │ POST /api/ingestion/events  │  Key   │      └► RDS │
                                               └─────────────────────────────┘        └─────────────┘
 ```
 
 The Arduino Uno has no network, so the laptop acts as a bridge. It calls the backend's single ingestion endpoint over HTTPS with the common event envelope (`type: WEIGHT`).
+
+- The bridge authenticates with `X-API-Key`. User login (JWT) is only for people using the dashboard; it doesn't apply here.
+- The backend stores readings in Amazon RDS (schema owned by `cuy-monitor-db`). The bridge never talks to the database.
 
 ## 2. Repository layout
 
@@ -25,7 +28,8 @@ cuy-monitor-arduino/
 ├── serial_bridge/
 │   ├── bridge.py                              pyserial → HTTPS POST
 │   ├── config.example.env                     SERIAL_PORT, BACKEND_URL, API_KEY, CAGE_ID
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim)
 └── docs/
     ├── wiring.md
     └── mounting.md
@@ -129,8 +133,9 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 
 ### Running as a service
 
-- Linux: systemd unit with `Restart=always`.
-- Windows: NSSM or Task Scheduler "at startup", with power-saving/sleep disabled.
+- Linux: systemd unit with `Restart=always`, **or** the optional container: `docker run -d --restart unless-stopped --device /dev/ttyUSB0 --env-file serial_bridge/.env cuy-monitor-serial-bridge:local`.
+- Windows: NSSM or Task Scheduler "at startup", with power-saving/sleep disabled. Docker is not used on Windows (USB serial passthrough is unreliable and Docker Desktop is too heavy for the Celeron).
+- The bridge stays on the farm laptop: it can't run on AWS because it needs the USB port.
 
 ## 7. Mounting (summary of `docs/mounting.md`)
 
@@ -146,7 +151,7 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 | Firmware | Serial Monitor: stable readings, tare command, known weights |
 | Bridge parsing | pytest with sample lines (valid JSON, `#` lines, garbage) |
 | Bridge offline behavior | Point `BACKEND_URL` to an unreachable host, check the queue and resend |
-| End to end | Reading appears in `GET /api/cages/cage-1/weight` and on the dashboard chart |
+| End to end | Reading appears in `GET /api/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
 
 ## 9. Decisions
 

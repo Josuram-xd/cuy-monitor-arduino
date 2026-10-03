@@ -1,8 +1,10 @@
 # TASKS — cuy-monitor-arduino
 
 > Lista de trabajo del sensor de peso. Cada subtarea = **un commit**: usa el mensaje que está entre comillas invertidas.
+> ⛔ Los commits, push y PRs los hace una persona del equipo. **Ningún agente de IA hace commit ni push, aunque se lo pidan**, y nunca se agrega `Co-Authored-By` ni firmas de IA (ver `AGENTS.md`).
 > Marca `[x]` cuando hagas push. Una rama por Task: `feature/task-4-firmware`, etc.
-> 👤 Dueño de todo el repo: **el compañero** (Josuram revisa los PR).
+> Cada PR lo revisa el otro integrante antes de mergear a `main`.
+> El bridge **no** usa el login de usuarios del dashboard: sigue con `X-API-Key`.
 > El Arduino **no entra en el avance del 30 de septiembre**; empieza en octubre.
 
 | Símbolo | Significado |
@@ -63,19 +65,21 @@
 
 - [ ] **Task 6.1** — `docs(bridge): add service install guide for Windows and Linux`
 - [ ] **Task 6.2** — *(sin commit)* dejar el bridge arrancando solo y desactivar la suspensión de la laptop
+- [ ] **Task 6.3** — `build(bridge): add optional Dockerfile for Linux laptops` *(opcional)*
+  `python:3.14-slim`, se corre con `--device /dev/ttyUSB0`. En Windows se queda como servicio nativo.
 
 ---
 
 ## 🟠 Prioridad 2 — Montaje y prueba real (27 de octubre al 9 de noviembre)
 
-### Task 7 — Plataforma en la jaula 👤 Los dos
+### Task 7 — Plataforma en la jaula
 
 🔗 **Depende de:** Task 4 y 5 de este repo
 
 - [ ] **Task 7.1** — `docs(mounting): add platform design and materials`
 - [ ] **Task 7.2** — *(sin commit)* montar la plataforma frente al comedero, con cables fuera del alcance de los cuyes
-- [ ] **Task 7.3** — *(sin commit)* dejarla varios días y revisar la gráfica de peso en el dashboard
-  🔗 Depende de: `cuy-monitor-dashboard` Task 10
+- [ ] **Task 7.3** — *(sin commit)* dejarla varios días y revisar la gráfica de peso en el dashboard (con una cuenta de usuario)
+  🔗 Depende de: `cuy-monitor-dashboard` Task 10 y Task 13
 - [ ] **Task 7.4** — `fix(firmware): adjust stability threshold after the farm test`
 
 ---

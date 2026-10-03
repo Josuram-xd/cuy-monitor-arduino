@@ -1,11 +1,13 @@
 # PRD — Sensor de peso (cuy-monitor-arduino)
 
 > PRD del componente. El PRD general del producto está en `cuy-monitor-backend/docs/PRD.md`.
-> Dueño: compañero · Última revisión: 26 de septiembre de 2026
+> Última revisión: 3 de octubre de 2026
 
 ## 1. Qué es
 
 Una plataforma de pesaje dentro de la jaula (celda de carga + HX711 + Arduino Uno) y un programa en la laptop (`serial_bridge`) que manda cada lectura al backend. El peso es **una señal más de salud**: si el peso de la jaula baja de forma sostenida, puede indicar que los cuyes están comiendo menos.
+
+**Cambios del sistema que lo afectan (octubre):** el dashboard tiene login de usuarios, pero el bridge **no** usa login (sigue con `X-API-Key`); la base pasó a Amazon RDS (repo `cuy-monitor-db`) y el bridge nunca la toca; la gráfica de peso solo se ve con sesión iniciada en el dashboard.
 
 **Limitación aceptada:** en esta versión la lectura es **de la jaula**, no de un cuy específico (no sabemos quién está parado en la plataforma). Asociar el peso a cada cuy queda como mejora futura (cruzándolo con la cámara).
 
@@ -13,7 +15,7 @@ Una plataforma de pesaje dentro de la jaula (celda de carga + HX711 + Arduino Un
 
 - **Backend:** recibe las lecturas.
 - **Equipo técnico:** arma, calibra y monta la plataforma.
-- **Criador (indirecto):** ve la gráfica de peso en el dashboard.
+- **Criador (indirecto):** ve la gráfica de peso en el dashboard, después de iniciar sesión.
 
 ## 3. Requisitos funcionales
 
@@ -57,4 +59,4 @@ Una plataforma de pesaje dentro de la jaula (celda de carga + HX711 + Arduino Un
 | De | Qué necesita |
 |---|---|
 | `cuy-monitor-backend` | Endpoint `POST /api/ingestion/events`, sobre común y payload `WEIGHT`, la `API_KEY` |
-| Laptop del criadero | Python 3.14, puerto USB libre, internet |
+| Laptop del criadero | Python 3.14 (o Docker si la laptop usa Linux), puerto USB libre, internet |
