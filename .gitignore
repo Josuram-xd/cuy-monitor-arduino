@@ -1,0 +1,19 @@
+# Local credentials
+serial_bridge/.env
+
+# Python environments and caches
+**/__pycache__/
+**/*.py[cod]
+serial_bridge/.venv/
+serial_bridge/.pytest_cache/
+serial_bridge/.ruff_cache/
+
+# Arduino build output
+**/build/
+*.hex
+*.elf
+*.eep
+
+# Local operating system files
+.DS_Store
+Thumbs.db

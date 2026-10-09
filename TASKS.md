@@ -20,7 +20,7 @@
 
 ### Task 1 — Proyecto base
 
-- [ ] **Task 1.1** — `chore: add repo structure, README and gitignore`
+- [x] **Task 1.1** — `chore: add repo structure, README and gitignore`
   Carpetas `firmware/`, `calibration/`, `serial_bridge/`, `docs/`.
 - [x] **Task 1.2** — `docs: add PRD, ARCHITECTURE and AGENTS`
 
