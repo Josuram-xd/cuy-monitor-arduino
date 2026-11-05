@@ -27,7 +27,7 @@ Una plataforma de pesaje dentro de la jaula (celda de carga + HX711 + Arduino Un
 | W-04 | Mandar por USB serial una línea JSON cada ~2 s: `{"grams": 812.4, "stable": true}` |
 | W-05 | Poder hacer tara (poner en cero) con un comando por serial, sin volver a cargar el sketch |
 | W-06 | Sketch aparte para calibrar con un peso conocido |
-| W-07 | `serial_bridge`: leer el puerto serial y mandar las lecturas estables a `POST /api/ingestion/events` (tipo `WEIGHT`) con `X-API-Key` |
+| W-07 | `serial_bridge`: leer el puerto serial y mandar las lecturas estables a `POST /api/v1/ingestion/events` (tipo `WEIGHT`) con `X-API-Key` |
 | W-08 | `serial_bridge`: si se cae internet, guardar las lecturas en un buffer limitado y reenviarlas después |
 | W-09 | `serial_bridge`: reconectarse solo si se desconecta el USB |
 
@@ -58,5 +58,5 @@ Una plataforma de pesaje dentro de la jaula (celda de carga + HX711 + Arduino Un
 
 | De | Qué necesita |
 |---|---|
-| `cuy-monitor-backend` | Endpoint `POST /api/ingestion/events`, sobre común y payload `WEIGHT`, la `API_KEY` |
+| `cuy-monitor-backend` | Endpoint `POST /api/v1/ingestion/events`, sobre común y payload `WEIGHT`, la `API_KEY` |
 | Laptop del criadero | Python 3.14 (o Docker si la laptop usa Linux), puerto USB libre, internet |

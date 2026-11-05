@@ -10,7 +10,7 @@
 │ platform                              │     │                             │ HTTPS  │             │
 │  └─ 5 kg load cell ─► HX711 ─► Arduino│ USB │ serial_bridge (Python)      │ ─────► │ Caddy (EC2) │
 │                     (DT=3, SCK=2)     │ ──► │  reads JSON lines           │ X-API- │  └► backend │
-└───────────────────────────────────────┘     │ POST /api/ingestion/events  │  Key   │      └► RDS │
+└───────────────────────────────────────┘     │ POST /api/v1/ingestion/...  │  Key   │      └► RDS │
                                               └─────────────────────────────┘        └─────────────┘
 ```
 
@@ -26,7 +26,13 @@ cuy-monitor-arduino/
 ├── firmware/weight_sensor/weight_sensor.ino   reads HX711, averages, stability, JSON over serial
 ├── calibration/calibrate/calibrate.ino        finds the calibration factor with a known weight
 ├── serial_bridge/
-│   ├── bridge.py                              pyserial → HTTPS POST
+│   ├── bridge.py                              entry point: wires the pieces below, runs until Ctrl+C
+│   ├── config.py                              Settings from .env (HTTPS only, interval ≥ 10 s)
+│   ├── readings.py                            parse_line (skips '#', empty, broken JSON) + SendThrottle
+│   ├── events.py                              the WEIGHT envelope, one eventId per reading
+│   ├── delivery.py                            BackendClient (202/4xx/5xx) + Dispatcher (bounded queue, backoff)
+│   ├── serial_source.py                       lines from the USB port, reopened every 5 s when unplugged
+│   ├── tests/                                 pytest
 │   ├── config.example.env                     SERIAL_PORT, BACKEND_URL, API_KEY, CAGE_ID
 │   ├── requirements.txt
 │   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim)
@@ -96,7 +102,7 @@ for each line:
     if stable and (now - last_sent) >= SEND_INTERVAL (10 s):
         body = envelope { eventId: uuid4, type: WEIGHT, cageId, timestamp: now UTC,
                           source: arduino, schemaVersion: 1, payload: { grams, stable } }
-        POST {BACKEND_URL}/api/ingestion/events  header X-API-Key
+        POST {BACKEND_URL}/api/v1/ingestion/events  header X-API-Key
         on network error / 5xx → append to bounded queue (max 1000, drop oldest), retry with backoff
         on 4xx → log and drop (bad data or wrong key; retrying won't help)
 ```
@@ -104,7 +110,7 @@ for each line:
 ### Request contract (source of truth: `cuy-monitor-backend/docs/contracts/`)
 
 ```http
-POST /api/ingestion/events
+POST /api/v1/ingestion/events
 X-API-Key: <API_KEY>
 Content-Type: application/json
 
@@ -149,9 +155,9 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 | What | How |
 |---|---|
 | Firmware | Serial Monitor: stable readings, tare command, known weights |
-| Bridge parsing | pytest with sample lines (valid JSON, `#` lines, garbage) |
+| Bridge | `cd serial_bridge && pytest && ruff check .`: parser (valid JSON, `#` lines, garbage, negatives), throttle, envelope, 202/4xx/5xx, backoff, bounded queue, USB unplugged |
 | Bridge offline behavior | Point `BACKEND_URL` to an unreachable host, check the queue and resend |
-| End to end | Reading appears in `GET /api/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
+| End to end | Reading appears in `GET /api/v1/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
 
 ## 9. Decisions
 
