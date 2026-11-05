@@ -35,7 +35,8 @@ cuy-monitor-arduino/
 │   ├── tests/                                 pytest
 │   ├── config.example.env                     SERIAL_PORT, BACKEND_URL, API_KEY, CAGE_ID
 │   ├── requirements.txt
-│   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim)
+│   ├── service/cuy-serial-bridge.service      systemd unit (docs/service.md)
+│   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim, not root)
 └── docs/
     ├── wiring.md
     └── mounting.md
@@ -139,6 +140,7 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 
 ### Running as a service
 
+- Step by step in [service.md](service.md).
 - Linux: systemd unit with `Restart=always`, **or** the optional container: `docker run -d --restart unless-stopped --device /dev/ttyUSB0 --env-file serial_bridge/.env cuy-monitor-serial-bridge:local`.
 - Windows: NSSM or Task Scheduler "at startup", with power-saving/sleep disabled. Docker is not used on Windows (USB serial passthrough is unreliable and Docker Desktop is too heavy for the Celeron).
 - The bridge stays on the farm laptop: it can't run on AWS because it needs the USB port.
