@@ -23,8 +23,10 @@ The Arduino Uno has no network, so the laptop acts as a bridge. It calls the bac
 
 ```
 cuy-monitor-arduino/
-├── firmware/weight_sensor/weight_sensor.ino   reads HX711, averages, stability, JSON over serial
-├── calibration/calibrate/calibrate.ino        finds the calibration factor with a known weight
+├── firmware/weight_sensor/weight_sensor.ino   reads HX711 every 200 ms, prints one JSON line every 2 s
+├── firmware/weight_sensor/weight_logic.h      ring buffer, stability, JSON line, commands (no hardware: tested on a PC)
+├── calibration/calibrate/calibrate.ino        finds the calibration factor with a known weight, saves it in EEPROM
+├── test/                                      host stubs of Arduino/HX711/EEPROM + tests of both sketches (run_tests.sh)
 ├── serial_bridge/
 │   ├── bridge.py                              pyserial → HTTPS POST
 │   ├── config.example.env                     SERIAL_PORT, BACKEND_URL, API_KEY, CAGE_ID
@@ -71,12 +73,17 @@ every ~2 s:
 |---|---|
 | `t` | Tare (set current load as zero) |
 | `c <factor>` | Set calibration factor at runtime (not persisted unless saved to EEPROM) |
+| `s` | Save the current calibration factor in EEPROM |
+
+EEPROM layout (shared by both sketches): at address 0, `{uint32_t magic = 0x43555931 ("CUY1"); float factor;}`.
+A new board has `0xFF` everywhere, so without the magic the default factor is used and the start says so.
 
 ### Rules
 
 - No `delay()` longer than the HX711 read interval; use `millis()` timing.
 - Calibration factor stored in EEPROM so a power cut doesn't lose it.
-- Negative values below −20 g are clamped and flagged `stable: false` (usually a tare problem).
+- Grams are never negative (the contract asks for `≥ 0`): a mean slightly below 0 is printed as `0.0`; below −20 g it is `0.0` and `stable: false` (usually a tare problem).
+- `stable` is `true` only when the buffer is full (10 readings) and `max − min ≤ 5 g`.
 
 ## 5. Calibration (`calibrate.ino`)
 
@@ -148,7 +155,8 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 
 | What | How |
 |---|---|
-| Firmware | Serial Monitor: stable readings, tare command, known weights |
+| Firmware logic | `test/run_tests.sh`: compiles both sketches with `g++` against stubs of Arduino, HX711 and EEPROM and runs them over simulated time |
+| Firmware on the board | Serial Monitor: stable readings, tare command, known weights |
 | Bridge parsing | pytest with sample lines (valid JSON, `#` lines, garbage) |
 | Bridge offline behavior | Point `BACKEND_URL` to an unreachable host, check the queue and resend |
 | End to end | Reading appears in `GET /api/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
