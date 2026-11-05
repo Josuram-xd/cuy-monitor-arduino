@@ -49,15 +49,16 @@
 
 ### Task 5 — Serial bridge (laptop)
 
-🔗 **Depende de:** seguir con las Task 2.3–2.6 y 3.2–3.4 del repo `cuy-monitor-backend` (endpoint `/api/ingestion/events` desplegado y contrato `WEIGHT`)
+🔗 **Depende de:** seguir con las Task 2.3–2.6 y 3.2–3.4 del repo `cuy-monitor-backend` (endpoint `/api/v1/ingestion/events` desplegado y contrato `WEIGHT`)
 
 - [x] **Task 5.1** — `chore(bridge): add requirements and config example`
-- [ ] **Task 5.2** — `feat(bridge): read and parse JSON lines from the serial port`
-- [ ] **Task 5.3** — `feat(bridge): send stable readings as WEIGHT events every 10 s`
-- [ ] **Task 5.4** — `feat(bridge): retry with backoff and keep a bounded queue`
-- [ ] **Task 5.5** — `feat(bridge): reconnect when the USB is unplugged`
-- [ ] **Task 5.6** — `test(bridge): cover parser, retry and drop rules`
+- [x] **Task 5.2** — `feat(bridge): read and parse JSON lines from the serial port`
+- [x] **Task 5.3** — `feat(bridge): send stable readings as WEIGHT events every 10 s`
+- [x] **Task 5.4** — `feat(bridge): retry with backoff and keep a bounded queue`
+- [x] **Task 5.5** — `feat(bridge): reconnect when the USB is unplugged`
+- [x] **Task 5.6** — `test(bridge): cover parser, retry and drop rules`
 - [ ] **Task 5.7** — *(sin commit)* probar contra el backend desplegado y ver el evento en su log
+  Probado contra el backend local con un puerto serial virtual (`socat`): 3 lecturas en 30 s llegaron a `weight_reading`. Falta repetirlo contra el desplegado (la EC2 está detenida).
 
 🔓 **Desbloquea:** `cuy-monitor-backend` Task 12 · `cuy-monitor-dashboard` Task 10
 
