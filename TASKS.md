@@ -64,9 +64,10 @@
 
 ### Task 6 — Servicio en la laptop
 
-- [ ] **Task 6.1** — `docs(bridge): add service install guide for Windows and Linux`
+- [x] **Task 6.1** — `docs(bridge): add service install guide for Windows and Linux`
+  `docs/service.md` (systemd, NSSM, Programador de tareas) y `serial_bridge/service/cuy-serial-bridge.service`.
 - [ ] **Task 6.2** — *(sin commit)* dejar el bridge arrancando solo y desactivar la suspensión de la laptop
-- [ ] **Task 6.3** — `build(bridge): add optional Dockerfile for Linux laptops` *(opcional)*
+- [x] **Task 6.3** — `build(bridge): add optional Dockerfile for Linux laptops` *(opcional)*
   `python:3.14-slim`, se corre con `--device /dev/ttyUSB0`. En Windows se queda como servicio nativo.
 
 ---
