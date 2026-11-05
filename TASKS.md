@@ -42,12 +42,13 @@
 
 🔗 **Depende de:** Task 3 de este repo (factor de calibración)
 
-- [ ] **Task 4.1** — `feat(firmware): read HX711 and convert to grams`
-- [ ] **Task 4.2** — `feat(firmware): average readings with a ring buffer`
-- [ ] **Task 4.3** — `feat(firmware): detect stable readings`
-- [ ] **Task 4.4** — `feat(firmware): print one JSON line every 2 s at 115200 baud`
-- [ ] **Task 4.5** — `feat(firmware): add tare and calibration serial commands`
-- [ ] **Task 4.6** — `feat(firmware): store calibration factor in EEPROM`
+- [x] **Task 4.1** — `feat(firmware): read HX711 and convert to grams`
+- [x] **Task 4.2** — `feat(firmware): average readings with a ring buffer`
+- [x] **Task 4.3** — `feat(firmware): detect stable readings`
+- [x] **Task 4.4** — `feat(firmware): print one JSON line every 2 s at 115200 baud`
+- [x] **Task 4.5** — `feat(firmware): add tare and calibration serial commands`
+- [x] **Task 4.6** — `feat(firmware): store calibration factor in EEPROM`
+  Probado en la PC con `test/run_tests.sh` (stubs de Arduino, HX711 y EEPROM). Falta cargarlo en la placa real con el Serial Monitor.
 
 ### Task 5 — Serial bridge (laptop)
 
