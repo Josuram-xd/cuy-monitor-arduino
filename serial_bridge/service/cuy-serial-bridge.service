@@ -1,0 +1,28 @@
+# systemd unit for the bridge on a Linux laptop (docs/service.md). Copy it to /etc/systemd/system/,
+# change User and the paths if the repo is not in /home/cuy/cuy-monitor-arduino, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now cuy-serial-bridge
+[Unit]
+Description=Cuy Monitor serial bridge (Arduino scale -> backend)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=cuy
+# the user must be in the dialout group to open /dev/ttyUSB0 or /dev/ttyACM0
+SupplementaryGroups=dialout
+WorkingDirectory=/home/cuy/cuy-monitor-arduino/serial_bridge
+ExecStart=/home/cuy/cuy-monitor-arduino/serial_bridge/.venv/bin/python bridge.py
+# the bridge already reopens the USB on its own; this only covers a crash
+Restart=always
+RestartSec=10
+# SIGTERM makes the bridge close cleanly (it logs how many events were still pending)
+KillSignal=SIGTERM
+TimeoutStopSec=15
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

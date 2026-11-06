@@ -60,7 +60,7 @@ ruff check .
 
 ## Reglas del bridge
 
-1. El bridge solo habla con `POST /api/ingestion/events` del backend, mandando el sobre común con `type: "WEIGHT"`.
+1. El bridge solo habla con `POST /api/v1/ingestion/events` del backend, mandando el sobre común con `type: "WEIGHT"`.
 2. Solo manda lecturas con `stable: true`, máximo una cada 10 s.
 3. Si falla la red o el backend responde 5xx: guarda en una cola **limitada** (máx. 1000) y reintenta con backoff. Si responde 4xx: registra el error y descarta (reintentar no sirve).
 4. Si se desconecta el USB, reintenta abrir el puerto cada 5 s sin cerrarse.

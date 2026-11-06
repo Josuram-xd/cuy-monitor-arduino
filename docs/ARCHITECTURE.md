@@ -10,7 +10,7 @@
 │ platform                              │     │                             │ HTTPS  │             │
 │  └─ 5 kg load cell ─► HX711 ─► Arduino│ USB │ serial_bridge (Python)      │ ─────► │ Caddy (EC2) │
 │                     (DT=3, SCK=2)     │ ──► │  reads JSON lines           │ X-API- │  └► backend │
-└───────────────────────────────────────┘     │ POST /api/ingestion/events  │  Key   │      └► RDS │
+└───────────────────────────────────────┘     │ POST /api/v1/ingestion/...  │  Key   │      └► RDS │
                                               └─────────────────────────────┘        └─────────────┘
 ```
 
@@ -28,10 +28,17 @@ cuy-monitor-arduino/
 ├── calibration/calibrate/calibrate.ino        finds the calibration factor with a known weight, saves it in EEPROM
 ├── test/                                      host stubs of Arduino/HX711/EEPROM + tests of both sketches (run_tests.sh)
 ├── serial_bridge/
-│   ├── bridge.py                              pyserial → HTTPS POST
+│   ├── bridge.py                              entry point: wires the pieces below, runs until Ctrl+C
+│   ├── config.py                              Settings from .env (HTTPS only, interval ≥ 10 s)
+│   ├── readings.py                            parse_line (skips '#', empty, broken JSON) + SendThrottle
+│   ├── events.py                              the WEIGHT envelope, one eventId per reading
+│   ├── delivery.py                            BackendClient (202/4xx/5xx) + Dispatcher (bounded queue, backoff)
+│   ├── serial_source.py                       lines from the USB port, reopened every 5 s when unplugged
+│   ├── tests/                                 pytest
 │   ├── config.example.env                     SERIAL_PORT, BACKEND_URL, API_KEY, CAGE_ID
 │   ├── requirements.txt
-│   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim)
+│   ├── service/cuy-serial-bridge.service      systemd unit (docs/service.md)
+│   └── Dockerfile                             optional, Linux laptops only (python:3.14-slim, not root)
 └── docs/
     ├── wiring.md
     └── mounting.md
@@ -103,7 +110,7 @@ for each line:
     if stable and (now - last_sent) >= SEND_INTERVAL (10 s):
         body = envelope { eventId: uuid4, type: WEIGHT, cageId, timestamp: now UTC,
                           source: arduino, schemaVersion: 1, payload: { grams, stable } }
-        POST {BACKEND_URL}/api/ingestion/events  header X-API-Key
+        POST {BACKEND_URL}/api/v1/ingestion/events  header X-API-Key
         on network error / 5xx → append to bounded queue (max 1000, drop oldest), retry with backoff
         on 4xx → log and drop (bad data or wrong key; retrying won't help)
 ```
@@ -111,7 +118,7 @@ for each line:
 ### Request contract (source of truth: `cuy-monitor-backend/docs/contracts/`)
 
 ```http
-POST /api/ingestion/events
+POST /api/v1/ingestion/events
 X-API-Key: <API_KEY>
 Content-Type: application/json
 
@@ -140,6 +147,7 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 
 ### Running as a service
 
+- Step by step in [service.md](service.md).
 - Linux: systemd unit with `Restart=always`, **or** the optional container: `docker run -d --restart unless-stopped --device /dev/ttyUSB0 --env-file serial_bridge/.env cuy-monitor-serial-bridge:local`.
 - Windows: NSSM or Task Scheduler "at startup", with power-saving/sleep disabled. Docker is not used on Windows (USB serial passthrough is unreliable and Docker Desktop is too heavy for the Celeron).
 - The bridge stays on the farm laptop: it can't run on AWS because it needs the USB port.
@@ -157,9 +165,9 @@ The `eventId` is generated once per reading and kept when retrying, so the backe
 |---|---|
 | Firmware logic | `test/run_tests.sh`: compiles both sketches with `g++` against stubs of Arduino, HX711 and EEPROM and runs them over simulated time |
 | Firmware on the board | Serial Monitor: stable readings, tare command, known weights |
-| Bridge parsing | pytest with sample lines (valid JSON, `#` lines, garbage) |
+| Bridge | `cd serial_bridge && pytest && ruff check .`: parser (valid JSON, `#` lines, garbage, negatives), throttle, envelope, 202/4xx/5xx, backoff, bounded queue, USB unplugged |
 | Bridge offline behavior | Point `BACKEND_URL` to an unreachable host, check the queue and resend |
-| End to end | Reading appears in `GET /api/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
+| End to end | Reading appears in `GET /api/v1/cages/cage-1/weight` (with a user JWT) and on the dashboard chart after logging in |
 
 ## 9. Decisions
 
