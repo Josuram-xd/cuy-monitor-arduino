@@ -22,3 +22,6 @@ build/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Host test binaries
+test/build/
