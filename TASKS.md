@@ -28,24 +28,28 @@
 
 - [ ] **Task 2.1** — *(sin commit)* comprar Arduino Uno, HX711, celda de carga de 5 kg y cables
 - [ ] **Task 2.2** — `docs(wiring): add HX711 wiring diagram and photos`
+  Diagrama y tablas en `docs/wiring.md`; faltan las fotos del circuito real.
   DT → D3, SCK → D2, VCC → 5V, GND → GND.
 
 ### Task 3 — Calibración
 
-- [ ] **Task 3.1** — `feat(calibration): add calibration sketch with tare`
-- [ ] **Task 3.2** — `feat(calibration): print calibration factor with a known weight`
+- [x] **Task 3.1** — `feat(calibration): add calibration sketch with tare`
+- [x] **Task 3.2** — `feat(calibration): print calibration factor with a known weight`
+  `w <gramos>` calcula el factor, `c` lo ajusta y `s` lo guarda en la EEPROM. Probado en la PC con `test/run_tests.sh`.
 - [ ] **Task 3.3** — `docs(calibration): add calibration steps and measured error`
+  Pasos en `docs/calibration.md`; falta llenar el error medido con la celda real.
 
 ### Task 4 — Firmware
 
 🔗 **Depende de:** Task 3 de este repo (factor de calibración)
 
-- [ ] **Task 4.1** — `feat(firmware): read HX711 and convert to grams`
-- [ ] **Task 4.2** — `feat(firmware): average readings with a ring buffer`
-- [ ] **Task 4.3** — `feat(firmware): detect stable readings`
-- [ ] **Task 4.4** — `feat(firmware): print one JSON line every 2 s at 115200 baud`
-- [ ] **Task 4.5** — `feat(firmware): add tare and calibration serial commands`
-- [ ] **Task 4.6** — `feat(firmware): store calibration factor in EEPROM`
+- [x] **Task 4.1** — `feat(firmware): read HX711 and convert to grams`
+- [x] **Task 4.2** — `feat(firmware): average readings with a ring buffer`
+- [x] **Task 4.3** — `feat(firmware): detect stable readings`
+- [x] **Task 4.4** — `feat(firmware): print one JSON line every 2 s at 115200 baud`
+- [x] **Task 4.5** — `feat(firmware): add tare and calibration serial commands`
+- [x] **Task 4.6** — `feat(firmware): store calibration factor in EEPROM`
+  Probado en la PC con `test/run_tests.sh` (stubs de Arduino, HX711 y EEPROM). Falta cargarlo en la placa real con el Serial Monitor.
 
 ### Task 5 — Serial bridge (laptop)
 
@@ -77,7 +81,8 @@
 
 🔗 **Depende de:** Task 4 y 5 de este repo
 
-- [ ] **Task 7.1** — `docs(mounting): add platform design and materials`
+- [x] **Task 7.1** — `docs(mounting): add platform design and materials`
+  `docs/mounting.md`: diseño, materiales, dónde ponerla y las reglas de bienestar animal.
 - [ ] **Task 7.2** — *(sin commit)* montar la plataforma frente al comedero, con cables fuera del alcance de los cuyes
 - [ ] **Task 7.3** — *(sin commit)* dejarla varios días y revisar la gráfica de peso en el dashboard (con una cuenta de usuario)
   🔗 Depende de: `cuy-monitor-dashboard` Task 10 y Task 13
