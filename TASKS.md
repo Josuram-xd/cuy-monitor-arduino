@@ -28,6 +28,7 @@
 
 - [ ] **Task 2.1** — *(sin commit)* comprar Arduino Uno, HX711, celda de carga de 5 kg y cables
 - [ ] **Task 2.2** — `docs(wiring): add HX711 wiring diagram and photos`
+  Diagrama y tablas en `docs/wiring.md`; faltan las fotos del circuito real.
   DT → D3, SCK → D2, VCC → 5V, GND → GND.
 
 ### Task 3 — Calibración
@@ -79,7 +80,8 @@
 
 🔗 **Depende de:** Task 4 y 5 de este repo
 
-- [ ] **Task 7.1** — `docs(mounting): add platform design and materials`
+- [x] **Task 7.1** — `docs(mounting): add platform design and materials`
+  `docs/mounting.md`: diseño, materiales, dónde ponerla y las reglas de bienestar animal.
 - [ ] **Task 7.2** — *(sin commit)* montar la plataforma frente al comedero, con cables fuera del alcance de los cuyes
 - [ ] **Task 7.3** — *(sin commit)* dejarla varios días y revisar la gráfica de peso en el dashboard (con una cuenta de usuario)
   🔗 Depende de: `cuy-monitor-dashboard` Task 10 y Task 13
