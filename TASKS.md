@@ -32,9 +32,11 @@
 
 ### Task 3 — Calibración
 
-- [ ] **Task 3.1** — `feat(calibration): add calibration sketch with tare`
-- [ ] **Task 3.2** — `feat(calibration): print calibration factor with a known weight`
+- [x] **Task 3.1** — `feat(calibration): add calibration sketch with tare`
+- [x] **Task 3.2** — `feat(calibration): print calibration factor with a known weight`
+  `w <gramos>` calcula el factor, `c` lo ajusta y `s` lo guarda en la EEPROM. Probado en la PC con `test/run_tests.sh`.
 - [ ] **Task 3.3** — `docs(calibration): add calibration steps and measured error`
+  Pasos en `docs/calibration.md`; falta llenar el error medido con la celda real.
 
 ### Task 4 — Firmware
 
