@@ -36,13 +36,19 @@ Meta: **±5 g** (ARCHITECTURE, sección 5). Se llena al calibrar la celda real (
 
 | Fecha | Factor guardado | Peso conocido (g) | Lectura (g) | Error (g) |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
+| 2026-11-20 | 426.7 | 312 (botella de agua de 300 ml con tapa, peso estimado) | 305.4–312.2 | −6.6 a +0.2 |
+
+Calibrada a mano con `t`, `c <factor>` y `s` sobre `weight_sensor.ino`. El primer intento (factor 403.4) se
+descartó: con peso la lectura subía ~30 g por minuto porque la celda no estaba bien fijada; tras remontarla se
+asienta en ~20 s con ±1.5 g. Pendiente: repetir con el peso exacto de la botella medido en una balanza de cocina.
 
 ## Si algo no cuadra
 
 - **La lectura no cambia al poner peso:** revisa DT → D3 y SCK → D2, y los cuatro cables de la celda al HX711
   ([wiring.md](wiring.md)).
 - **Sale negativo al poner peso:** los cables A+ y A− están al revés; inviértelos (o usa un factor negativo).
+- **Con peso, la lectura sube sin parar (decenas de gramos por minuto):** la celda está floja o la plataforma
+  roza. Atornilla cada extremo de la barra a una pieza distinta (base y plataforma) y deja libre la zona que
+  flexiona.
 - **La lectura deriva sola:** espera unos minutos con todo encendido antes de tarar; la celda se estabiliza con la
   temperatura.
