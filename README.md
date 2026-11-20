@@ -18,6 +18,16 @@ La estructura y la documentación inicial están preparadas. Las tareas de
 calibración, firmware y bridge se implementarán por separado; consulta
 [`TASKS.md`](TASKS.md) para el estado.
 
+## Patrones de diseño
+
+| Patrón | Dónde | Qué hace |
+|---|---|---|
+| Command | `firmware/weight_sensor/weight_sensor.ino` (`COMMANDS`) | Cada comando serial (`t`, `c`, `s`) está ligado a su acción en una tabla; agregar uno es una fila. |
+| Iterator | `serial_bridge/serial_source.py` (`SerialLines.lines()`) | Entrega las líneas del puerto una a una como generador. |
+| Adapter | `serial_bridge/delivery.py` (`BackendClient`), `serial_bridge/serial_source.py` (`SerialLines`) | Traduce el puerto serial y la API del backend a interfaces propias del bridge. |
+
+La clase `Bridge` de `serial_bridge/bridge.py` es un coordinador pequeño; no es el patrón Bridge de GoF.
+
 ## Documentación
 
 - [`docs/PRD.md`](docs/PRD.md): requisitos del sensor y del bridge.
