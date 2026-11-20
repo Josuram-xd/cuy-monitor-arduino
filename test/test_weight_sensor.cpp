@@ -87,6 +87,10 @@ int main() {
   send("c 0");
   CHECK_CONTAINS(host::serial_output, "commands: t | c <factor> | s");
   CHECK_NEAR(factor, 400.0f, 0.001f);
+  host::serial_output.clear();
+  send("x");
+  CHECK_CONTAINS(host::serial_output, "commands: t | c <factor> | s");
+  CHECK_NEAR(factor, 400.0f, 0.001f);
 
   factor = 1.0f;
   host::serial_output.clear();
