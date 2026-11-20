@@ -61,26 +61,42 @@ void tare() {
   Serial.println(F("# tare done"));
 }
 
+// Command pattern: each serial command bound to the action that performs it (no heap, 3 entries)
+typedef void (*CommandAction)(float value);
+
+struct CommandEntry {
+  weight::CommandType type;
+  CommandAction run;
+};
+
+void tareCommand(float) { tare(); }
+
+void setFactorCommand(float value) {
+  factor = value;
+  scale.set_scale(factor);
+  buffer.clear();
+  Serial.print(F("# factor set to "));
+  Serial.print(factor, 4);
+  Serial.println(F(" (send s to keep it)"));
+}
+
+void saveCommand(float) { saveFactor(); }
+
+const CommandEntry COMMANDS[] = {
+    {weight::COMMAND_TARE, tareCommand},
+    {weight::COMMAND_SET_FACTOR, setFactorCommand},
+    {weight::COMMAND_SAVE, saveCommand},
+};
+
 void runCommand(const char *line) {
   weight::Command command = weight::parseCommand(line);
-  switch (command.type) {
-    case weight::COMMAND_TARE:
-      tare();
-      break;
-    case weight::COMMAND_SET_FACTOR:
-      factor = command.value;
-      scale.set_scale(factor);
-      buffer.clear();
-      Serial.print(F("# factor set to "));
-      Serial.print(factor, 4);
-      Serial.println(F(" (send s to keep it)"));
-      break;
-    case weight::COMMAND_SAVE:
-      saveFactor();
-      break;
-    default:
-      Serial.println(F("# commands: t | c <factor> | s"));
+  for (const CommandEntry &entry : COMMANDS) {
+    if (entry.type == command.type) {
+      entry.run(command.value);
+      return;
+    }
   }
+  Serial.println(F("# commands: t | c <factor> | s"));
 }
 
 void printReading() {
