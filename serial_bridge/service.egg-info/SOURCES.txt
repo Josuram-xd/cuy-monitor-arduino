@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+service.egg-info/PKG-INFO
+service.egg-info/SOURCES.txt
+service.egg-info/dependency_links.txt
+service.egg-info/top_level.txt
+tests/test_bridge.py
+tests/test_config.py
+tests/test_delivery.py
+tests/test_events.py
+tests/test_readings.py
+tests/test_serial_source.py
